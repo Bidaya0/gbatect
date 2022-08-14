@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  jobaggrv-mysql:
+    image: mysql:8-debian
+    environment:
+      MYSQL_ROOT_PASSWORD: jobaggrv
+      MYSQL_USER: jobaggrv
+      MYSQL_PASSWORD: jobaggrv
+      MYSQL_DATABASE: jobaggrv
+    ports:
+      - 33060:3306
+  
+  jobaggrv-scrapy:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+  jobaggrv-api:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    entrypoint: gunicorn  --worker-class gevent -w 4 --worker-connections 1000 -b 0.0.0.0:8000 'jobaggrv_api.app:app'
+    ports: 
+      - 8000:8000
