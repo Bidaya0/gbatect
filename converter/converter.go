@@ -5,8 +5,8 @@ import (
 	"github.com/compose-spec/compose-go/loader"
 	composetypes "github.com/compose-spec/compose-go/types"
 	batecttypes "github.com/bidaya0/gbatect/types"
-//	"gopkg.in/yaml.v3"
-//	"os"
+	"gopkg.in/yaml.v3"
+	"os"
 	"strings"
 )
 
@@ -49,5 +49,27 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 		containers[service.Name] = containeroption
 	}
 	return containers, nil
+}
+
+func ReadAndConvert(sourceFilePath string) {
+	dockercomposefile, err := os.ReadFile(sourceFilePath)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+	}
+	k1, err := loader.ParseYAML(dockercomposefile)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+	}
+	tmpk := k1["services"]
+	tmp3, _ := tmpk.(map[string]interface{})
+	services, err := LoadServices(tmp3)
+	containers, err := TransServicesToContainer(services)
+	var f1 batecttypes.BatectConfig 
+	f1.Containers = containers
+	batectyaml, err := yaml.Marshal(&f1)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+	}
+	fmt.Printf(string(batectyaml))
 }
 
