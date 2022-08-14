@@ -1,4 +1,4 @@
-module gbatect/m
+module github.com/bidaya0/gbatect
 
 go 1.19
 
