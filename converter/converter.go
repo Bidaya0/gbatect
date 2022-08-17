@@ -7,7 +7,7 @@ import (
 	batecttypes "github.com/bidaya0/gbatect/types"
 	"gopkg.in/yaml.v3"
 	"os"
-	"strings"
+//	"strings"
 )
 
 func LoadServices(servicesDict map[string]interface{}) ([]composetypes.ServiceConfig, error) {
@@ -28,15 +28,44 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 	for _, service := range servicesconfigs {
 		containeroption := batecttypes.ContainerOption{
 			Image:       service.Image,
+			AdditionalHosts: service.ExtraHosts,
+			CapabilitiesToAdd: service.CapAdd,
+			CapabilitiesToDrop: service.CapDrop,
+			Command: service.Command, //!!
+			Dependencies: service.DependsOn, //!!
+			Devices: service.Devices,
+			EnableInitProcess: service.Init,
+			Entrypoint: service.Entrypoint, //!!
 			Environment: service.Environment,
+			ShmSize: service.ShmSize,
+			WorkingDirectory: service.WorkingDir,
+		}
+		// containeroption.AdditionalHosts = service.ExtraHosts
+		for _, network := range service.Networks {
+		  containeroption.AdditionalHostnames = append(containeroption.AdditionalHostnames, network.Aliases...)
 		}
 		if service.Build != nil {
+			containeroption.BuildArgs = service.Build.Args
 			containeroption.BuildDirectory = service.Build.Context
 			containeroption.Dockerfile = service.Build.Dockerfile
+			containeroption.BuildTarget = service.Build.Target
 		}
-		if len(service.Entrypoint) > 0 {
-			containeroption.Entrypoint = strings.Join(service.Entrypoint, " ")
+		if service.HealthCheck != nil {
+			containeroption.HealthCheck = batecttypes.HealthCheck{
+				Command: service.HealthCheck.Test,	
+				Interval: service.HealthCheck.Interval,	
+				Retries: service.HealthCheck.Retries,	
+				StartPeriod: service.HealthCheck.StartPeriod,	
+				Timeout: service.HealthCheck.Timeout,	
+			}
 		}
+		if service.Logging != nil {
+			containeroption.LogDriver = service.Logging.Driver
+			containeroption.LogOptions = service.Logging.Options
+		}
+//		if len(service.Entrypoint) > 0 {
+//			containeroption.Entrypoint = strings.Join(service.Entrypoint, " ")
+//		}
 		for _, port := range service.Ports {
 			portstring := fmt.Sprintf("%v:%v", port.Published, port.Target)
 			containeroption.Ports = append(containeroption.Ports, portstring)

@@ -11,20 +11,20 @@ import (
 
 
 type ContainerOption struct {
-	AdditionalHostnames      []string       "additional_hostnames,omitempty"
-	AdditionalHosts      map[string]string       "additional_hosts,omitempty"
-	BuildArgs      map[string]string       "build_args,omitempty"
+	AdditionalHostnames   []string        "additional_hostnames,omitempty"
+	AdditionalHosts      composetypes.HostsList        "additional_hosts,omitempty"
+	BuildArgs      composetypes.MappingWithEquals       "build_args,omitempty"
 	BuildDirectory string                  "build_directory,omitempty"
 	BuildStage      string       "build_stage,omitempty"
 	BuildTarget      string       "build_target,omitempty"
 	CapabilitiesToAdd      []string       "capabilities_to_add,omitempty"
 	CapabilitiesToDrop      []string       "capabilities_to_drop,omitempty"
-	Command     string                  "command,omitempty"
-	Dependencies     []string                  "dependencies,omitempty"
+	Command     composetypes.ShellCommand                  "command,omitempty"
+	Dependencies     composetypes.DependsOnConfig                 "dependencies,omitempty"
 	Devices     []string                  "devices,omitempty" // /dev/sda:/dev/disk:r ??
 	Dockerfile     string                  ",omitempty"	
-	EnableInitProcess bool                "enable_init_process,omitempty"
-	Entrypoint     string                  ",omitempty"
+	EnableInitProcess *bool                "enable_init_process,omitempty"
+	Entrypoint     composetypes.ShellCommand                  "entrypoint,omitempty"
 	Environment    composetypes.MappingWithEquals ",omitempty"
 	HealthCheck			HealthCheck                  "health_check,omitempty"
 	Image          string                  ",omitempty"
@@ -35,7 +35,7 @@ type ContainerOption struct {
 	Privileged    bool                  "privileged,omitempty"
 	RunAsCurrentUser   RunAsCurrentUser                  "run_as_current_user,omitempty"
 	setup_commands   []SetupCommand                  "setup_commands,omitempty"
-	ShmZize   string                  "shm_size,omitempty"
+	ShmSize           composetypes.UnitBytes                   "shm_size,omitempty"
 	Volumes        []string                ",omitempty"
 	WorkingDirectory   string                  "working_directory,omitempty"
 }
@@ -51,11 +51,11 @@ type RunAsCurrentUser struct{
 }
 
 type HealthCheck struct {
-	Command     string                  ",omitempty"
-	Retries     string                  ",omitempty"
-	Interval     string                  ",omitempty"
-	StartPeriod     string                  "start_period,omitempty"
-	Timeout    string                  "timeout,omitempty"
+	Command     composetypes.HealthCheckTest                  ",omitempty"
+	Retries     *uint64                  ",omitempty"
+	Interval    *composetypes.Duration                  ",omitempty"
+	StartPeriod   *composetypes.Duration                  "start_period,omitempty"
+	Timeout    *composetypes.Duration                  "timeout,omitempty"
 }
 
 type ContainerItem struct {
