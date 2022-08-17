@@ -19,12 +19,12 @@ type ContainerOption struct {
 	BuildTarget      string       "build_target,omitempty"
 	CapabilitiesToAdd      []string       "capabilities_to_add,omitempty"
 	CapabilitiesToDrop      []string       "capabilities_to_drop,omitempty"
-	Command     composetypes.ShellCommand                  "command,omitempty"
-	Dependencies     composetypes.DependsOnConfig                 "dependencies,omitempty"
+	Command     string                  "command,omitempty"
+	Dependencies     []string                 "dependencies,omitempty"
 	Devices     []string                  "devices,omitempty" // /dev/sda:/dev/disk:r ??
 	Dockerfile     string                  ",omitempty"	
 	EnableInitProcess *bool                "enable_init_process,omitempty"
-	Entrypoint     composetypes.ShellCommand                  "entrypoint,omitempty"
+	Entrypoint     string                  "entrypoint,omitempty"
 	Environment    composetypes.MappingWithEquals ",omitempty"
 	HealthCheck			HealthCheck                  "health_check,omitempty"
 	Image          string                  ",omitempty"
@@ -51,7 +51,7 @@ type RunAsCurrentUser struct{
 }
 
 type HealthCheck struct {
-	Command     composetypes.HealthCheckTest                  ",omitempty"
+	Command     string                  ",omitempty"
 	Retries     *uint64                  ",omitempty"
 	Interval    *composetypes.Duration                  ",omitempty"
 	StartPeriod   *composetypes.Duration                  "start_period,omitempty"
