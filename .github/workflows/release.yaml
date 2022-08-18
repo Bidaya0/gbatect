@@ -21,6 +21,6 @@ jobs:
     - uses: wangyoucao577/go-release-action@v1.30
       with:
         github_token: ${{ secrets.GBATECT_GITHUB_TOKEN }}
-        goos: linux
-        goarch: windows
+        goos: windows
+        goarch: amd64
 
