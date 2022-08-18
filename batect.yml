@@ -1,0 +1,12 @@
+containers:
+  builder:
+    image: golang:1.19.0
+    working_directory: /opt/gbatect/
+    volumes:
+      - '.:/opt/gbatect/'
+tasks:
+  make:
+    group: Build tasks
+    run:
+      container: builder
+      command: make 
