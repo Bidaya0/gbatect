@@ -11,13 +11,17 @@ gbatect take the `docker-compose.yml` and translates it to `batect.yml`.
 
 - [ ] bidirectional conversion between docker-compose and batect
 - [ ] basic support Kubernetes 
+- [ ] convert `docker run` command to batect container
+- [ ] update exists batect.yml
 
 ## 0.0.1
 
-- [ ] Convert docker-compose.yml to batect.yml
-	- [ ] Support all batect field types
-	- [ ] basic output batect
+- [x] Convert docker-compose.yml to batect.yml
+	- [x] Support all batect field types
+	- [x] basic output batect
 - [ ] basic cli
 	- [ ] basic help document
-
-
+- [ ] project quality flow
+	- [ ] coverage test
+	- [ ] code style check
+	- [x] code scaner
