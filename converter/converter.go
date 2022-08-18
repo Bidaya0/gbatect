@@ -84,7 +84,7 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 	return containers, nil
 }
 
-func ReadAndConvert(sourceFilePath string) {
+func ReadAndConvert(sourceFilePath string) ([]byte){
 	dockercomposefile, err := os.ReadFile(sourceFilePath)
 	if err != nil {
 		fmt.Printf("error: %v", err)
@@ -103,6 +103,6 @@ func ReadAndConvert(sourceFilePath string) {
 	if err != nil {
 		fmt.Printf("error: %v", err)
 	}
-	fmt.Printf(string(batectyaml))
+	return batectyaml
 }
 
