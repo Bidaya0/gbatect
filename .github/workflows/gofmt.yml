@@ -1,0 +1,22 @@
+name: "Go fmt check"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main" ]
+
+jobs:
+  fmt-check:
+    name: fmt-check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-go@v3
+      with:
+        go-version: '>=1.19.0'
+    - run: |
+        gofmt -l -e -d .
+        test -z $(gofmt -l .)
+
+
