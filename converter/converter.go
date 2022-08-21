@@ -2,9 +2,9 @@ package converter
 
 import (
 	"fmt"
+	batecttypes "github.com/bidaya0/gbatect/types"
 	"github.com/compose-spec/compose-go/loader"
 	composetypes "github.com/compose-spec/compose-go/types"
-	batecttypes "github.com/bidaya0/gbatect/types"
 	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
@@ -27,18 +27,18 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 	containers := make(map[string]batecttypes.ContainerOption)
 	for _, service := range servicesconfigs {
 		containeroption := batecttypes.ContainerOption{
-			Image:       service.Image,
-			AdditionalHosts: service.ExtraHosts,
-			CapabilitiesToAdd: service.CapAdd,
+			Image:              service.Image,
+			AdditionalHosts:    service.ExtraHosts,
+			CapabilitiesToAdd:  service.CapAdd,
 			CapabilitiesToDrop: service.CapDrop,
-			Devices: service.Devices,
-			EnableInitProcess: service.Init,
-			Environment: service.Environment,
-			ShmSize: service.ShmSize,
-			WorkingDirectory: service.WorkingDir,
+			Devices:            service.Devices,
+			EnableInitProcess:  service.Init,
+			Environment:        service.Environment,
+			ShmSize:            service.ShmSize,
+			WorkingDirectory:   service.WorkingDir,
 		}
 		for _, network := range service.Networks {
-		  containeroption.AdditionalHostnames = append(containeroption.AdditionalHostnames, network.Aliases...)
+			containeroption.AdditionalHostnames = append(containeroption.AdditionalHostnames, network.Aliases...)
 		}
 		if service.Build != nil {
 			containeroption.BuildArgs = service.Build.Args
@@ -48,10 +48,10 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 		}
 		if service.HealthCheck != nil {
 			containeroption.HealthCheck = batecttypes.HealthCheck{
-				Interval: service.HealthCheck.Interval,	
-				Retries: service.HealthCheck.Retries,	
-				StartPeriod: service.HealthCheck.StartPeriod,	
-				Timeout: service.HealthCheck.Timeout,	
+				Interval:    service.HealthCheck.Interval,
+				Retries:     service.HealthCheck.Retries,
+				StartPeriod: service.HealthCheck.StartPeriod,
+				Timeout:     service.HealthCheck.Timeout,
 			}
 			if service.HealthCheck.Test != nil {
 				containeroption.HealthCheck.Command = strings.Join(service.HealthCheck.Test, " ")
@@ -84,7 +84,7 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 	return containers, nil
 }
 
-func ReadAndConvert(sourceFilePath string) ([]byte){
+func ReadAndConvert(sourceFilePath string) []byte {
 	dockercomposefile, err := os.ReadFile(sourceFilePath)
 	if err != nil {
 		fmt.Printf("error: %v", err)
@@ -97,12 +97,12 @@ func ReadAndConvert(sourceFilePath string) ([]byte){
 	tmp3, _ := tmpk.(map[string]interface{})
 	services, err := LoadServices(tmp3)
 	containers, err := TransServicesToContainer(services)
-	var f1 batecttypes.BatectConfig 
-	f1.Containers = containers
+	var f1 = batecttypes.BatectConfig{
+		Containers: containers,
+	}
 	batectyaml, err := yaml.Marshal(&f1)
 	if err != nil {
 		fmt.Printf("error: %v", err)
 	}
 	return batectyaml
 }
-
