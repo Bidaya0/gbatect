@@ -21,7 +21,7 @@ gbatect take the `docker-compose.yml` and translates it to `batect.yml`.
 	- [x] basic output batect
 - [ ] basic cli
 	- [ ] basic help document
-- [ ] project quality flow
-	- [ ] coverage test
-	- [ ] code style check
+- [x] project quality flow
+	- [x] coverage test
+	- [x] code style check
 	- [x] code scaner
