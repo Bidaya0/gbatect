@@ -84,14 +84,15 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 	return containers, nil
 }
 
-func ReadAndConvert(sourceFilePath string) []byte {
+func ReadAndConvert(sourceFilePath string) ([]byte, error) {
 	dockercomposefile, err := os.ReadFile(sourceFilePath)
 	if err != nil {
 		fmt.Printf("error: %v", err)
+		return nil, err
 	}
 	k1, err := loader.ParseYAML(dockercomposefile)
 	if err != nil {
-		fmt.Printf("error: %v", err)
+		return nil, err
 	}
 	tmpk := k1["services"]
 	tmp3, _ := tmpk.(map[string]interface{})
@@ -102,7 +103,7 @@ func ReadAndConvert(sourceFilePath string) []byte {
 	}
 	batectyaml, err := yaml.Marshal(&f1)
 	if err != nil {
-		fmt.Printf("error: %v", err)
+		return nil, err
 	}
-	return batectyaml
+	return batectyaml, nil
 }
