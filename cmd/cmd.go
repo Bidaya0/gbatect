@@ -3,7 +3,10 @@ package cmd
 import (
 	"fmt"
 	"github.com/bidaya0/gbatect/converter"
+	batecttypes "github.com/bidaya0/gbatect/types"
+	"github.com/compose-spec/compose-go/loader"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 	"os"
 )
 
@@ -25,18 +28,38 @@ var convertCmd = &cobra.Command{
 	gbatect take the docker-compose.yml and translates it to batect.yml.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		//if len(args) > 0{
-		//	filepath := args[0]
-		//}
+
 		if fromfile != "" {
-			result := converter.ReadAndConvert(fromfile)
+			dockercomposefile, err := os.ReadFile(fromfile)
+			if err != nil {
+				fmt.Printf("error: %v", err)
+			}
+			k1, err := loader.ParseYAML(dockercomposefile)
+			if err != nil {
+				fmt.Printf("error: %v", err)
+			}
+			tmpk := k1["services"]
+			tmp3, _ := tmpk.(map[string]interface{})
+			services, err := converter.LoadServices(tmp3)
+			containers, err := converter.TransServicesToContainer(services)
+			var f1 = batecttypes.BatectConfig{
+				Containers: containers,
+			}
+			batectyaml, err := yaml.Marshal(&f1)
+			if err != nil {
+				fmt.Printf("error: %v", err)
+			}
+
+			if err != nil {
+				fmt.Printf("error: %v", err)
+			}
 			if tofile != "" {
-				err := os.WriteFile(tofile, result, 0644)
+				err := os.WriteFile(tofile, batectyaml, 0644)
 				if err != nil {
 					fmt.Printf("%v", err)
 				}
 			} else {
-				fmt.Printf("%v", string(result))
+				fmt.Printf("%v", string(batectyaml))
 			}
 		}
 	},
