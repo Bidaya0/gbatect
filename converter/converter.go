@@ -10,6 +10,9 @@ import (
 	"strings"
 )
 
+/*
+Use to load the services part of docker-compose.yml.
+*/
 func LoadServices(servicesDict map[string]interface{}) ([]composetypes.ServiceConfig, error) {
 	var services []composetypes.ServiceConfig
 	for name, element := range servicesDict {
@@ -23,6 +26,9 @@ func LoadServices(servicesDict map[string]interface{}) ([]composetypes.ServiceCo
 	return services, nil
 }
 
+/*
+Use to convert service defined by compose-go to batecttypes.Containers.
+*/
 func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (batecttypes.Containers, error) {
 	containers := make(map[string]batecttypes.ContainerOption)
 	for _, service := range servicesconfigs {
@@ -84,26 +90,33 @@ func TransServicesToContainer(servicesconfigs []composetypes.ServiceConfig) (bat
 	return containers, nil
 }
 
-func ReadAndConvert(sourceFilePath string) ([]byte, error) {
-	dockercomposefile, err := os.ReadFile(sourceFilePath)
-	if err != nil {
-		fmt.Printf("error: %v", err)
-		return nil, err
+/*
+Use to read docker-compose file from the `fromfile` path , and outout file to the `tofile` path.
+*/
+func ConvertFiletoFile(fromfile string, tofile string) {
+	if fromfile != "" {
+		dockercomposefile, err := os.ReadFile(fromfile)
+		if err != nil {
+			fmt.Printf("error: %v", err)
+		}
+		k1, err := loader.ParseYAML(dockercomposefile)
+		if err != nil {
+			fmt.Printf("error: %v", err)
+		}
+		tmpk := k1["services"]
+		tmp3, _ := tmpk.(map[string]interface{})
+		services, err := LoadServices(tmp3)
+		containers, err := TransServicesToContainer(services)
+		var f1 = batecttypes.BatectConfig{
+			Containers: containers,
+		}
+		batectyaml, err := yaml.Marshal(&f1)
+		if err != nil {
+			fmt.Printf("error: %v", err)
+		}
+		err = os.WriteFile(tofile, batectyaml, 0644)
+		if err != nil {
+			fmt.Printf("%v", err)
+		}
 	}
-	k1, err := loader.ParseYAML(dockercomposefile)
-	if err != nil {
-		return nil, err
-	}
-	tmpk := k1["services"]
-	tmp3, _ := tmpk.(map[string]interface{})
-	services, err := LoadServices(tmp3)
-	containers, err := TransServicesToContainer(services)
-	var f1 = batecttypes.BatectConfig{
-		Containers: containers,
-	}
-	batectyaml, err := yaml.Marshal(&f1)
-	if err != nil {
-		return nil, err
-	}
-	return batectyaml, nil
 }
