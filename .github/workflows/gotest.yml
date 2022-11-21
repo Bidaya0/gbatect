@@ -22,7 +22,7 @@ jobs:
 
 
   frontend-build-check:
-    name: unittest-check
+    name: frontend-build-check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
