@@ -2,6 +2,7 @@ FROM golang:1.17 AS build-env
 ADD . /go/src/app
 WORKDIR /go/src/app
 RUN go install
+RUN go install github.com/gopherjs/gopherjs@v1.18.0-beta1
 RUN gopherjs build -m *.go -o ./main.js 
 
 
